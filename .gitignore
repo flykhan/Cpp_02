@@ -2,6 +2,7 @@
 /*
 # 添加不忽略的文件和文件夹
 !*.cpp
+!*.h
 !README.md
 !.gitignore
 !/README.assets

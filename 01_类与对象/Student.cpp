@@ -1,27 +1,26 @@
-#include <iostream>
-#include <string>
-using namespace std;
+// Student.cpp 文件
+#include "Student.h" //记得添加类头文件
 
-// class类关键字、Student类名
-class Student
+Student::Student() {}
+
+Student::~Student() {}
+
+void Student::setName(string name)
 {
-    //访问限制符 - 公有属性
-public:
-    Student() {}  //构造函数
-    ~Student() {} //析构函数
+    this->name = name;
+}
 
-    //成员函数
-    void setName(string name) { this->name = name; }
-    string getName() const { return name; }
-    void setAge(int age) { this->age = age; }
-    int getAge() const { return age; }
+string Student::getName() const
+{
+    return name;
+}
 
-    //访问修饰符 - 私有属性
-private:
-    //数据成员
-    string name;
-    int age;
-};
+void Student::setAge(int age)
+{
+    this->age = age;
+}
 
-
-// 一般将数据成员封装在 private 关键字下，不让用户直接访问数据成员，而是通过成员函数来进行访问。
+int Student::getAge() const
+{
+    return age;
+}

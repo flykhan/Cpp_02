@@ -5,7 +5,7 @@
 !*.h
 !README.md
 !.gitignore
-!/README.assets/
+# !/README.assets/
 !README.assets/*.png
 # 各章节管理
 */*

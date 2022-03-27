@@ -21,7 +21,22 @@ public:
         this->age = age;
     }
  */
+    //拷贝构造函数
+    Teacher(const Teacher &tea){
+        this->name=tea.name;
+        this->age=tea.age;
+    }
 private:
     string name;
     int age;
 };
+
+int main(){
+    //执行默认构造函数
+    Teacher tea1;
+    //执行拷贝构造函数
+    Teacher tea2=tea1;
+    Teacher tea3=Teacher(tea1);
+
+    return 0;
+}

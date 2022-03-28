@@ -1,6 +1,4 @@
-#include <iostream>
 #include "Point.h"
-using namespace std;
 
 //栈上实例化
 void stackInstantiation()

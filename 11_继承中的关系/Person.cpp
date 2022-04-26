@@ -6,7 +6,9 @@ Person::Person(){
 Person::~Person(){
     cout<<"~Person()"<<endl;
 }
-void Person::setName(const string &name){
+
+//隐藏函数代码段
+/* void Person::setName(const string &name){
     this->name = name;
 }
 string Person::getName() const {
@@ -14,4 +16,4 @@ string Person::getName() const {
 }
 void Person::eat(){
     cout<<"Person::eat()"<<endl;
-}
+} */

@@ -757,3 +757,10 @@ dynamic_cast < 新类型 > ( 表达式 )
 在运行时使用 typeid 识别类型、使用 dynamic_cast 进行类型转换。
 
 ![image-20220430113905303](README.assets/image-20220430113905303-1289946.png)
+
+- ## 实验总结
+
+- RTTI 需要以继承为基础。
+- RTTI 基类中需要有虚函数或者纯虚函数。
+- RTTI 使用 typeid 和 dynamic_cast 来实现。
+- 需要注意在基类向派生类转换时可能会失败。

@@ -1486,3 +1486,87 @@ T Max(const T& a, const T& b)
 }
 ```
 
+- ## 模板特例化
+
+> 对类、变量（C++14 起）和函数模板都允许全特化，只允许对类模板与变量模板（C++14 起）部分特化。
+>
+> 模板 + 重载 = 模板特例化。
+>
+> 在开发时常规的模板可能无法满足需求，这个时候就需要使用模板特例化，所谓特例化就是重载模板特殊数据类型。
+
+```cpp
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+template<typename T>
+T Max(T a, T b)
+{
+    return a > b ? a : b;
+}
+
+template<>
+char* Max(char* a, char* b)
+{
+    return (strcmp(a, b) > 0 ? (a) : (b));
+}
+
+int main()
+{
+    float a = 4.7, b = 5;
+    cout << Max(a, b) << endl;
+    cout << Max('a', 'b') << endl;
+
+    const char* s1 = "hello";
+    const char* s2 = "world";
+    cout << Max(s1, s2) << endl;
+
+    return 0;
+}
+```
+
+- ## 自定义类模板
+
+> 模板使得程序开发时效率更高，不仅如此，当你自己编写完成一个模板感觉自己做了一件伟大的事情，因为以后再次遇到相同情况时直接使用之前编写好的模板即可，不需要重新开发了。瞬间感觉心情好了很多，以后都不用再做重复的事情了，并且可以按照自己的习惯开发、使用。
+>
+> 尽管前人造好了轮子，但还是想一探究竟，这个轮子是怎么造出来的，用了什么材质等都是我们自己想要去探索的。这便是求知欲，想要掌握其原理、本质。
+>
+> #### 示例代码 1
+>
+> 在 C++ 模板库中有一个类模板 pair，即两个数据成对应关系。例子简单的重新实现 Pair 类模板。
+
+```cpp
+#include <iostream>
+#include <string>
+#include <cassert>
+using namespace std;
+
+template<typename T1, typename T2>
+class Pair
+{
+public:
+    Pair(const T1& key, const T2& value) : m_key(key), m_value(value) {}
+    T1 key() const { return m_key; }
+    T2 value() const { return m_value; }
+
+    T2& operator[](const T1& key) {
+        assert(key == m_key);
+        return m_value;
+    }
+private:
+    T1 m_key;
+    T2 m_value;
+};
+
+int main()
+{
+
+    Pair<int, string> p(1, "hello");
+    cout << p.key() << ", " << p.value() << endl;
+
+    cout << p[1] << endl;
+
+    return 0;
+}
+```
+

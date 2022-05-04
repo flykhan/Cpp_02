@@ -1185,3 +1185,304 @@ Point p3 = p1 + p2;
 - 有些运算符最好要成对实现。
 - 对于单目运算符最好使用成员函数方式重载，对于双目运算符最好使用友元函数方式重载。
 - 尽量减少构造临时对象。
+
+# 21——模版函数与模版类
+
+> 在泛型编程的思想里，大部分基本算法被抽象、泛化，独立于与之对应的数据结构，用相同或相近的方式处理各种不同的情形。而模板是 C++ 中泛型编程的基础，模板是 C++ 编程中的一大利器，用好模板这个大利器，能够帮助我们编写程序提高好几个档次。
+>
+> 关于模板，我们需要学习到何种程度呢？
+>
+> 答：对于大部分开发者而言，首先学会使用 STL，例如 vector、list、map 等都是在开发中经常会用到的；其次是要自己会编写函数模板和类模板。这也是本次实验的目的。
+>
+> C++ 中一般常用有函数模板和类模板，例如 STL 中 vector、list 等都是模板类。其实关于模板的内容还不止于此，此外还有别名模板、变量模板等，[查看模板更多内容](https://zh.cppreference.com/w/cpp/language/templates)。
+
+- ## 模版相关概念
+
+在前面多态篇中提到过，多态分为动态多态和静态多态，而模板是属于静态多态的一种。
+
+#### 关键字
+
+在 C++ 中跟模板相关的关键字有：template、typename、class。
+
+- template 关键字是声明模板的关键字。
+- typename 与 class 在使用模板时的功能是一样的，没有区别。
+
+#### 函数模版格式
+
+```cpp
+template <typename type>
+返回值类型 函数名(参数列表)
+{
+   // 函数的主体
+}
+```
+
+示例:
+
+```cpp
+template <typename T>
+T Max(const T& a, const T& b)
+{
+   return a > b ? a : b;
+}
+```
+
+#### 类模版格式
+
+```cpp
+template <typename type>
+class 类名
+{
+    // 类主体
+}
+```
+
+示例:
+
+```cpp
+template <typename T>
+class MyVector
+{
+public:
+    MyVector(int len);
+    ~MyVector();
+    // ...
+private:
+    T *arr;
+    // ...
+}
+```
+
+#### 函数模板与模板函数、类模板与模板类
+
+函数模板与模板函数、类模板与模板类在概念上看似很相似，但需要注意这是两个不同的概念。
+
+- 函数模板是编写函数的模板代码。
+- 模板函数是指函数模板具体使用时产生带有具体数据类型的函数。
+- 类模板是编写的类模板代码。
+- 模板类是指使用类模板实例化带有类型的对象。
+
+- ## 标准模版库
+
+> C++ 标准库中引用了著名的 STL 模板库，其中像容器 vector、list、map 等都是类模板，本小节介绍模板容器类的使用方法。这几个容器是开发中经常会使用到的、并且使用的频率很高。本次实验课程中只使用了其中几个，实际上还有其他的容器可以使用，可以自行在 [中文官网](https://zh.cppreference.com/w/cpp/container) 查看相关使用方法。
+>
+> 在 Qt 或者 visual studio C++ 等 IDE 环境中对这些容器重新进行封装，但是其用法都是类似的。
+
+#### STL 在 C++ 中的位置
+
+STL 是 C++ 标准中的一部分，在 C++ 中扮演了很重要的角色，尤其是容器库与算法库。
+
+![4.4.1 STL_range.png](README.assets/e5e1bd6e96307349a43698fe91190a06-0.png)
+
+#### vector
+
+数组是程序开发时经常会使用的，而固定长度的数组往往又不能满足需求，这个时候 vector 动态数组就能满足开发时的需求。
+
+- vector 是动态数组，使用时先会申请一段连续的内存。
+- vector 的 capacity() 是数组容量，而 size() 是数组实际元素个数。
+
+vector 插入数据：
+
+- vector 插入数据时提供三种插入方式，其中在尾部插入数据效率最高。
+
+![4.4.2 vector_insert.png](README.assets/4bb08e43c1ea8f73593c604d49e40272-0-20220504120106898.png)
+
+vector 删除数据：
+
+- vector 删除数据时提供两种删除方式，其中在尾部删除数据效率最高。
+
+![4.4.3 vector_remove.png](README.assets/7fe02c13f81b85e205816a673a546837-0.png)
+
+Windows 下 vector 遍历数据：
+
+- 以下代码是在 windows 环境下编写的一段代码，运行后发现下标方式访问明显会快很多，而迭代器的方式耗时最长，这也是部分公司为了追求效率而抛弃 STL 的原因。
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <ctime>
+using namespace std;
+
+int main()
+{
+    const int count = 100000000;
+    vector<int> vec(count);
+
+    auto start = clock();
+
+    // 1. 下标方式访问
+    for(int i = 0; i < count; i++) {
+        // vec[i];
+        // 如果只是遍历而不修改值时建议使用 at(i) 函数方式访问
+        vec.at(i);
+    }
+    cout << endl;
+    auto end = clock();
+    auto duration = end - start;
+    cout << "下标方式访问：" << duration << " ms" << endl;
+
+    start = clock();
+    // 2. 迭代器方式访问
+    for(auto d = vec.begin(); d != vec.end(); d++) {
+        *d;
+    }
+    cout << endl;
+    cout << "迭代器访问方式：" << clock() - start << " ms" << endl;
+
+    start = clock();
+    // 3. 迭代器方式访问
+    for(vector<int>::const_iterator d = vec.begin(); d != vec.end(); d++) {
+        *d;
+    }
+    cout << endl;
+    cout << "迭代器访问方式：" << clock() - start << " ms" << endl;
+
+    start = clock();
+    // 4. 迭代器方式访问
+    for(auto const &d: vec) {	// ???
+        d;
+    }
+    cout << endl;
+    cout << "迭代器访问方式：" << clock() - start << " ms" << endl;
+
+    return 0;
+}
+```
+
+#### list
+
+- list 是双向链表，插入数据操作会很快。
+- 删除操作时也是与插入操作类似。
+
+![4.4.4 list_insert.png](README.assets/845f4433e7c5492c8bf38f94a6ea343c-0.png)
+
+#### vector 与 list 性能比较
+
+Windows 下：
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <list>
+#include <ctime>
+using namespace std;
+const int count = 1000000;
+
+void tail_insert()
+{
+    clock_t start = clock();
+    vector<int> vec;
+    for(int i = 0; i < count; i++) {
+        vec.push_back(i);
+    }
+    cout << "vector 尾插方式：" << clock() - start << " ms" << endl;
+
+    start = clock();
+    list<int> l;
+    for(int i = 0; i < count; i++) {
+        l.push_back(i);
+    }
+    cout << "list 尾插方式：" << clock() - start << " ms" << endl;
+
+    start = clock();
+    for(int i = 0; i < count; i++) {
+        int temp = vec.at(i);
+    }
+    cout << "vector 下标遍历：" << clock() - start << " ms" << endl;
+
+    start = clock();
+    for(auto d = vec.begin(); d != vec.end(); d++) {
+        *d;
+    }
+    cout << "vector 迭代器遍历：" << clock() - start << " ms" << endl;
+
+    start = clock();
+    for(auto d = l.begin(); d != l.end(); d++) {
+        *d;
+    }
+    cout << "list 迭代器遍历：" << clock() - start << " ms" << endl;
+}
+
+void head_insert()
+{
+    clock_t start = clock();
+    vector<int> vec;
+    for(int i = 0; i < count; i++) {
+        vec.insert(vec.begin(), i);
+    }
+    cout << "vector 头插方式：" << clock() - start << " ms" << endl;
+
+    start = clock();
+    list<int> l;
+    for(int i = 0; i < count; i++) {
+        l.push_front(i);
+    }
+    cout << "list 头插方式：" << clock() - start << " ms" << endl;
+}
+
+int main()
+{
+    head_insert();
+
+    tail_insert();
+
+    return 0;
+}
+```
+
+运行结果：
+
+- 插入时使用 vector 尾插方式最快，头插方式最慢，效果明显；而 list 不管是尾插还是头插方式效率都比较快。如果程序中插入删除操作比较频繁时可以考虑使用 list。
+- 程序开发时可以结合使用场景综合考虑使用哪种容器。
+
+![4.4.5 list_insert_cmp.png](README.assets/ee1e8096a614a152166dae7ec04b8b6c-0.png)
+
+#### map
+
+- map 提供一对 hash，自动建立 key-value 的对应，而 key 与 value 可以是任意类型。
+- map 是有序键值对容器，键值唯一。
+- map 提供了常用的方法可以对 map 做增删改查等操作。
+- map 对查找算法进行了优化，而不用遍历整个表进行查找。
+- map 将根据算法进行存储，与 vector 或者 list 的存储方式存在区别。
+
+- ## 自定义函数模块
+
+>  在合适的场合使用函数模板能够大大的提升开发的效率，例如经常使用的一个例子，求两个数的最大值。就目前使用的方法中，最大值求法有很多种，如宏定义、重载、模板。
+
+#### 宏定义求最大值
+
+宏定义求最大值的做法也会经常见到，但是宏定义不会安全检查，如果稍微有点错误就难以发现了。可以考虑使用模板替代宏。
+
+```cpp
+#define    MAX(a, b)    ((a) > (b) ? (a) : (b))
+```
+
+#### 重载求最大值
+
+重载同样能实现求最大值，只是代码会比较冗余。
+
+```cpp
+int Max(int a, int b)
+{
+    return a > b ? a : b;
+}
+
+float Max(float a, float b)
+{
+    return a > b ? a : b;
+}
+...
+```
+
+#### 模板求最大值
+
+相对于宏定义和重载来说，模板既能对程序安全检查，代码也不那么冗余。
+
+```cpp
+template<typename T>
+T Max(const T& a, const T& b)
+{
+    return a > b ? a : b;
+}
+```
+
